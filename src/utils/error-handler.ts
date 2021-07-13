@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import errors from "./error-codes";
 
 export interface CLIError extends Error {
   code?: string;
@@ -10,6 +11,16 @@ const errorHandler = (err: CLIError) => {
       `${chalk.red(`${chalk.bold(`ERROR [${err.code}]:`)} ${err.message}`)}`
     );
   } else {
+    console.log(
+      `${chalk.red(
+        `${chalk.bold(`ERROR [${errors.HOPP000.code}]:`)} ${
+          errors.HOPP000.message
+        }`
+      )}`
+    );
+    console.dir(chalk.yellow(err.name));
+    console.dir(chalk.yellow(err.message));
+    console.dir(chalk.yellow(err.name));
   }
 };
 
