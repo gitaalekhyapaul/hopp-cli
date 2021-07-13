@@ -10,7 +10,7 @@ import { errorHandler } from "./utils";
 program
   .name("hopp-cli")
   .version(version, "-v, --ver", "see the current version of the CLI")
-  .usage("[flags or options] arguments");
+  .usage("[options or commands] arguments");
 
 program.exitOverride().configureOutput({
   writeErr: (str) => {},
@@ -25,14 +25,24 @@ program
     "-c, --config <file>",
     "path to a Hoppscotch collection.json file for CI testing"
   )
+  .allowExcessArguments(false)
+  .allowUnknownOption(false)
   .setOptionValue("interactive", false)
   .action(test);
 
 program
   .command("test")
+  .allowExcessArguments(false)
+  .allowUnknownOption(false)
   .description("interactive Hoppscotch testing through CLI")
   .setOptionValue("interactive", true)
   .action(test);
+
+program
+  .command("help", { isDefault: true, hidden: true })
+  .allowExcessArguments(false)
+  .allowUnknownOption(false)
+  .action(() => program.help());
 
 export const run = async (args: string[]) => {
   try {

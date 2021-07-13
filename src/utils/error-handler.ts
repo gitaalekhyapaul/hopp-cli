@@ -8,8 +8,11 @@ export interface CLIError extends Error {
 
 const errorHandler = (err: CLIError | CommanderError) => {
   if (err instanceof CommanderError) {
+    if (err.exitCode === 0) {
+      process.exit(0);
+    }
     console.log(`${chalk.red(`${chalk.bold(`ERROR:`)} ${err.message}`)}`);
-  } else if (err.code) {
+  } else if (err.code && err.code.startsWith("HOPP")) {
     console.log(
       `${chalk.red(`${chalk.bold(`ERROR [${err.code}]:`)} ${err.message}`)}`
     );
@@ -21,9 +24,9 @@ const errorHandler = (err: CLIError | CommanderError) => {
         }`
       )}`
     );
-    console.dir(chalk.yellow(err.name));
-    console.dir(chalk.yellow(err.message));
-    console.dir(chalk.yellow(err.name));
+    console.log(chalk.yellow(err.name));
+    console.log(chalk.yellow(err.message));
+    console.log(chalk.yellow(err.stack));
   }
 };
 
