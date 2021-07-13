@@ -1,12 +1,15 @@
 import chalk from "chalk";
 import errors from "./error-codes";
+import { CommanderError } from "commander";
 
 export interface CLIError extends Error {
   code?: string;
 }
 
-const errorHandler = (err: CLIError) => {
-  if (err.code) {
+const errorHandler = (err: CLIError | CommanderError) => {
+  if (err instanceof CommanderError) {
+    console.log(`${chalk.red(`${chalk.bold(`ERROR:`)} ${err.message}`)}`);
+  } else if (err.code) {
     console.log(
       `${chalk.red(`${chalk.bold(`ERROR [${err.code}]:`)} ${err.message}`)}`
     );

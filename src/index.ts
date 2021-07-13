@@ -12,7 +12,10 @@ program
   .version(version, "-v, --ver", "see the current version of the CLI")
   .usage("[flags or options] arguments");
 
-program.exitOverride();
+program.exitOverride().configureOutput({
+  writeErr: (str) => {},
+  outputError: (str, write) => {},
+});
 
 /**
  * * CLI Flags
