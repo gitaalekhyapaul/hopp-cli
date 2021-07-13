@@ -2,6 +2,7 @@ import { program } from "commander";
 
 import { version } from "../package.json";
 import { test } from "./commands";
+import { errorHandler } from "./utils";
 
 /**
  * * Program Default Configuration
@@ -10,6 +11,8 @@ program
   .name("hopp-cli")
   .version(version, "-v, --ver", "see the current version of the CLI")
   .usage("[flags or options] arguments");
+
+program.exitOverride();
 
 /**
  * * CLI Flags
@@ -29,7 +32,11 @@ program
   .action(test);
 
 export const run = async (args: string[]) => {
-  await program.parseAsync(args);
+  try {
+    await program.parseAsync(args);
+  } catch (err) {
+    errorHandler(err);
+  }
   const options = program.opts();
   if (Object.keys(options).length === 0) {
     program.help();
