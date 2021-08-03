@@ -1,24 +1,26 @@
 import fs from "fs/promises";
 import { join } from "path";
 import inquirer from "inquirer";
-import { FuzzyPathQuestionOptions } from "inquirer-fuzzy-path";
-inquirer.registerPrompt("fuzzypath", require("inquirer-fuzzy-path"));
+import fuzzyPath from "inquirer-fuzzy-path";
+inquirer.registerPrompt("fuzzypath", fuzzyPath);
 
 import { context } from "../schemas";
 import { errors } from "../utils";
+import debugging from "../utils/debugger";
 
 const run = async (context: context) => {
   if (context.interactive) {
     await parseOptions(context);
-    console.dir(context);
   } else {
     context.config = await checkFileURL(context.config!);
+  }
+  for (let index = 0; index < 10; index++) {
+    debugging.log(context);
   }
 };
 
 const checkFileURL = async (url: string) => {
   try {
-    console.log(url);
     const fileUrl = join(process.cwd(), url);
     await fs.access(fileUrl);
     return fileUrl;
@@ -30,24 +32,29 @@ const checkFileURL = async (url: string) => {
   }
 };
 const parseOptions = async (context: context) => {
-  const ans = await inquirer.prompt<FuzzyPathQuestionOptions>({
-    //@ts-ignore
-    type: "fuzzypath",
-    name: "fileUrl",
-    message: "Enter your Hoppscotch collection.json path:",
-    excludePath: (nodePath: any) => nodePath.startsWith("node_modules"),
-    itemType: "file",
-    suggestOnly: false,
-    depthLimit: 5,
-    validate: async (input) => {
-      try {
-        await checkFileURL(input);
-        return true;
-      } catch (err) {
-        return errors.HOPP001.message;
-      }
-    },
-  });
+  try {
+    const { fileUrl }: { fileUrl: string } = await inquirer.prompt([
+      {
+        type: "fuzzypath",
+        name: "fileUrl",
+        message: "Enter your Hoppscotch collection.json path:",
+        excludePath: (nodePath: string) => {
+          return nodePath.includes("node_modules");
+        },
+        excludeFilter: (nodePath: string) =>
+          nodePath == "." || nodePath.startsWith("."),
+        itemType: "file",
+        suggestOnly: false,
+        rootPath: ".",
+        depthLimit: 5,
+        emptyText: "No results...try searching for some other file!",
+      },
+    ]);
+
+    context.config = await checkFileURL(fileUrl);
+  } catch (err) {
+    parseOptions(context);
+  }
 };
 
 export default run;
