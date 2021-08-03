@@ -7,5 +7,10 @@ const errors = {
     code: "HOPP001",
     message: "File Not Found. Please Check Path URL.",
   },
+  HOPP002: {
+    code: "HOPP002",
+    message:
+      "Couldn't create debugging session! Make sure you are listening on Port 9999!",
+  },
 };
 export default errors;
