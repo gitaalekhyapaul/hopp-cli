@@ -14,9 +14,7 @@ const run = async (context: context) => {
   } else {
     context.config = await checkFileURL(context.config!);
   }
-  for (let index = 0; index < 10; index++) {
-    debugging.log(context);
-  }
+  debugging.dir(context);
 };
 
 const checkFileURL = async (url: string) => {
