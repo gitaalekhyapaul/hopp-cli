@@ -16,6 +16,7 @@ class debugging {
     const virtualConsole = new Console({
       stdout: sockClient,
       stderr: sockClient,
+      colorMode: true,
     });
     sockClient.on("error", () => {
       errorHandler({ name: "Debugger Error!", ...errors.HOPP002 });
@@ -28,19 +29,16 @@ class debugging {
   public static log(message?: any, ...optionalParams: any[]) {
     const { sockClient, virtualConsole } = debugging.createInstance();
     virtualConsole.log(chalk.greenBright(message, ...optionalParams));
-    sockClient.destroy();
     setTimeout(() => sockClient.destroy(), 50);
   }
   public static info(message?: any, ...optionalParams: any[]) {
     const { sockClient, virtualConsole } = debugging.createInstance();
     virtualConsole.info(chalk.cyanBright(message, ...optionalParams));
-    sockClient.destroy();
     setTimeout(() => sockClient.destroy(), 50);
   }
   public static error(message?: any, ...optionalParams: any[]) {
     const { sockClient, virtualConsole } = debugging.createInstance();
     virtualConsole.error(chalk.redBright(message, ...optionalParams));
-    sockClient.destroy();
     setTimeout(() => sockClient.destroy(), 50);
   }
   public static dir(item: any, option?: InspectOptions) {
