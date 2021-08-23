@@ -1,6 +1,7 @@
 import fs from "fs/promises";
-import { join } from "path";
+import { join, extname } from "path";
 import inquirer from "inquirer";
+import chalk from "chalk";
 import fuzzyPath from "inquirer-fuzzy-path";
 inquirer.registerPrompt("fuzzypath", fuzzyPath);
 
@@ -21,6 +22,14 @@ const checkFileURL = async (url: string) => {
   try {
     const fileUrl = join(process.cwd(), url);
     await fs.access(fileUrl);
+    if (extname(fileUrl) !== ".json") {
+      console.log(
+        `${chalk.red(
+          ">>"
+        )} Selected file is not a collection JSON. Please try again.`
+      );
+      throw "FileNotJSON";
+    }
     return fileUrl;
   } catch (err) {
     if (err.code === "ENOENT") {
@@ -29,7 +38,7 @@ const checkFileURL = async (url: string) => {
     throw err;
   }
 };
-const parseOptions = async (context: context) => {
+const parseOptions = async (context: context): Promise<any> => {
   try {
     const { fileUrl }: { fileUrl: string } = await inquirer.prompt([
       {
@@ -51,7 +60,7 @@ const parseOptions = async (context: context) => {
 
     context.config = await checkFileURL(fileUrl);
   } catch (err) {
-    parseOptions(context);
+    return parseOptions(context);
   }
 };
 

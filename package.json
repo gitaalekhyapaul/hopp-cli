@@ -13,7 +13,7 @@
   "scripts": {
     "build": "tsc --build src",
     "dev": "tsc --build src --watch",
-    "debugger": "nc -klvnp 9999"
+    "debugger": "node debugger.js 9999"
   },
   "keywords": [
     "cli",
