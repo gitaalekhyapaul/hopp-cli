@@ -5,9 +5,9 @@ import chalk from "chalk";
 import fuzzyPath from "inquirer-fuzzy-path";
 inquirer.registerPrompt("fuzzypath", fuzzyPath);
 
-import { context } from "../schemas";
-import { errors } from "../utils";
-import { isRESTCollection } from "../schemas/collection";
+import { context } from "../../schemas";
+import { errors } from "../../utils";
+import { isRESTCollection } from "../../schemas/collection";
 
 const run = async (context: context) => {
   if (context.interactive) {
@@ -20,7 +20,6 @@ const run = async (context: context) => {
   );
   if ((collectionArray as any[]).every(isRESTCollection)) {
     context.collections = collectionArray;
-    console.dir(context.collections);
     console.log("Collections parsed successfully!");
   } else {
     throw errors.HOPP003;
