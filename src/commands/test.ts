@@ -7,7 +7,7 @@ inquirer.registerPrompt("fuzzypath", fuzzyPath);
 
 import { context } from "../schemas";
 import { errors } from "../utils";
-import debugging from "../utils/debugger";
+import { isRESTCollection } from "../schemas/collection";
 
 const run = async (context: context) => {
   if (context.interactive) {
@@ -15,7 +15,16 @@ const run = async (context: context) => {
   } else {
     context.config = await checkFileURL(context.config!);
   }
-  debugging.dir(context);
+  const collectionArray = JSON.parse(
+    (await fs.readFile(context.config!)).toString()
+  );
+  if ((collectionArray as any[]).every(isRESTCollection)) {
+    context.collections = collectionArray;
+    console.dir(context.collections);
+    console.log("Collections parsed successfully!");
+  } else {
+    throw errors.HOPP003;
+  }
 };
 
 const checkFileURL = async (url: string) => {
@@ -31,8 +40,8 @@ const checkFileURL = async (url: string) => {
       throw "FileNotJSON";
     }
     return fileUrl;
-  } catch (err) {
-    if (err.code === "ENOENT") {
+  } catch (err: any) {
+    if (err.code && err.code === "ENOENT") {
       throw errors.HOPP001;
     }
     throw err;

@@ -12,5 +12,9 @@ const errors = {
     message:
       "Couldn't create debugging session! Make sure you are listening on Port 9999!",
   },
+  HOPP003: {
+    code: "HOPP003",
+    message: "Malformed Collection JSON!",
+  },
 };
 export default errors;
