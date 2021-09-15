@@ -134,17 +134,23 @@ export function isRESTCollection(x: any): x is Collection<HoppRESTRequest> {
   }
 
   if (!x.name || typeof x.name !== "string") return false;
-  if (!Array.isArray(x.folders)) {
-    return false;
-  } else {
-    const checkFolders = (x.folders as any[]).every(isRESTCollection);
-    if (!checkFolders) return false;
-  }
   if (!Array.isArray(x.requests)) {
     return false;
   } else {
-    const checkRequests = (x.requests as any[]).every(isRESTRequest);
-    if (!checkRequests) return false;
+    const checkRequests = [];
+    for (const [idx, val] of x.requests.entries()) {
+      checkRequests.push(isRESTRequest(x.requests[idx]));
+    }
+    if (!checkRequests.every((val) => val)) return false;
+  }
+  if (!Array.isArray(x.folders)) {
+    return false;
+  } else {
+    const checkFolders = [];
+    for (const [idx, val] of x.folders.entries()) {
+      checkFolders.push(isRESTCollection(x.folders[idx]));
+    }
+    if (!checkFolders.every((val) => val)) return false;
   }
   return true;
 }

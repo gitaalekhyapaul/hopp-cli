@@ -8,6 +8,7 @@ inquirer.registerPrompt("fuzzypath", fuzzyPath);
 import { context } from "../../schemas";
 import { errors } from "../../utils";
 import { isRESTCollection } from "../../schemas/collection";
+import requestParser from "./request-parser";
 
 const run = async (context: context) => {
   if (context.interactive) {
@@ -18,9 +19,15 @@ const run = async (context: context) => {
   const collectionArray = JSON.parse(
     (await fs.readFile(context.config!)).toString()
   );
-  if ((collectionArray as any[]).every(isRESTCollection)) {
+  const valid = [];
+  for (const [idx, val] of collectionArray.entries()) {
+    valid.push(isRESTCollection(collectionArray[idx]));
+  }
+  if (valid.every((val) => val)) {
     context.collections = collectionArray;
-    console.log("Collections parsed successfully!");
+    for (const x of collectionArray) {
+      await requestParser(x);
+    }
   } else {
     throw errors.HOPP003;
   }
