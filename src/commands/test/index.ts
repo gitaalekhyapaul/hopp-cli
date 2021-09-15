@@ -21,7 +21,11 @@ const run = async (context: context) => {
   );
   const valid = [];
   for (const [idx, val] of collectionArray.entries()) {
-    valid.push(isRESTCollection(collectionArray[idx]));
+    const pm = {
+      x: { ...collectionArray[idx] },
+    };
+    valid.push(isRESTCollection(pm));
+    collectionArray[idx] = pm.x;
   }
   if (valid.every((val) => val)) {
     context.collections = collectionArray;

@@ -18,7 +18,6 @@ const createRequest = (
   rootPath: string,
   req: HoppRESTRequest
 ): requestStack => {
-  console.dir(req, { depth: 10 });
   let config: AxiosRequestConfig = {};
   config.url = req.endpoint;
   config.method = req.method as Method;

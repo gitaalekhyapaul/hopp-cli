@@ -42,10 +42,10 @@ export function translateToNewRESTCollection(
   return obj;
 }
 
-function isRESTRequest(x: any): x is HoppRESTRequest {
-  if (!x || typeof x !== "object") return false;
-  if (!x.v) {
-    x = translateToNewRequest(x);
+function isRESTRequest(param: { x: any }): param is { x: HoppRESTRequest } {
+  if (!param.x || typeof param.x !== "object") return false;
+  if (!param.x.v) {
+    param.x = translateToNewRequest(param.x);
   }
   const entries = [
     "name",
@@ -55,7 +55,7 @@ function isRESTRequest(x: any): x is HoppRESTRequest {
     "testScript",
   ];
   for (const y of entries) {
-    if (!x[y] || typeof x[y] !== "string") return false;
+    if (!param.x[y] || typeof param.x[y] !== "string") return false;
   }
   const testParamOrHeader = (y: any) => {
     if (!y.key || typeof y.key !== "string") return false;
@@ -63,36 +63,46 @@ function isRESTRequest(x: any): x is HoppRESTRequest {
     if (!y.active || typeof y.active !== "boolean") return false;
     return true;
   };
-  if (!Array.isArray(x.params)) {
+  if (!Array.isArray(param.x.params)) {
     return false;
   } else {
-    const checkParams = (x.params as any[]).every(testParamOrHeader);
+    const checkParams = (param.x.params as any[]).every(testParamOrHeader);
     if (!checkParams) return false;
   }
-  if (!Array.isArray(x.headers)) {
+  if (!Array.isArray(param.x.headers)) {
     return false;
   } else {
-    const checkHeaders = (x.headers as any[]).every(testParamOrHeader);
+    const checkHeaders = (param.x.headers as any[]).every(testParamOrHeader);
     if (!checkHeaders) return false;
   }
-  if (!x.auth || typeof x.auth !== "object") {
+  if (!param.x.auth || typeof param.x.auth !== "object") {
     return false;
   } else {
-    if (!x.auth.authActive || typeof x.auth.authActive !== "boolean")
+    if (
+      !param.x.auth.authActive ||
+      typeof param.x.auth.authActive !== "boolean"
+    )
       return false;
-    if (!x.auth.authType || typeof x.auth.authType !== "string") {
+    if (!param.x.auth.authType || typeof param.x.auth.authType !== "string") {
       return false;
     } else {
-      switch (x.auth.authType) {
+      switch (param.x.auth.authType) {
         case "basic": {
-          if (!x.auth.username || typeof x.auth.username !== "string")
+          if (
+            !param.x.auth.username ||
+            typeof param.x.auth.username !== "string"
+          )
             return false;
-          if (!x.auth.password || typeof x.auth.password !== "string")
+          if (
+            !param.x.auth.password ||
+            typeof param.x.auth.password !== "string"
+          )
             return false;
           break;
         }
         case "bearer": {
-          if (!x.auth.token || typeof x.auth.token !== "string") return false;
+          if (!param.x.auth.token || typeof param.x.auth.token !== "string")
+            return false;
           break;
         }
         case "oauth-2": {
@@ -105,7 +115,8 @@ function isRESTRequest(x: any): x is HoppRESTRequest {
             "scope",
           ];
           for (const y of entries) {
-            if (!x.auth[y] || typeof x.auth[y] !== "string") return false;
+            if (!param.x.auth[y] || typeof param.x.auth[y] !== "string")
+              return false;
           }
           break;
         }
@@ -118,37 +129,47 @@ function isRESTRequest(x: any): x is HoppRESTRequest {
       }
     }
   }
-  if (!x.body || typeof x.body !== "object") {
+  if (!param.x.body || typeof param.x.body !== "object") {
     return false;
   } else {
-    if (typeof x.body.contentType === "undefined") return false;
-    if (typeof x.body.body === "undefined") return false;
+    if (typeof param.x.body.contentType === "undefined") return false;
+    if (typeof param.x.body.body === "undefined") return false;
   }
   return true;
 }
 
-export function isRESTCollection(x: any): x is Collection<HoppRESTRequest> {
-  if (!x) return false;
-  if (!x.v) {
-    x = translateToNewRESTCollection(x);
+export function isRESTCollection(param: {
+  x: any;
+}): param is { x: Collection<HoppRESTRequest> } {
+  if (!param.x) return false;
+  if (!param.x.v) {
+    param.x = translateToNewRESTCollection(param.x);
   }
 
-  if (!x.name || typeof x.name !== "string") return false;
-  if (!Array.isArray(x.requests)) {
+  if (!param.x.name || typeof param.x.name !== "string") return false;
+  if (!Array.isArray(param.x.requests)) {
     return false;
   } else {
     const checkRequests = [];
-    for (const [idx, val] of x.requests.entries()) {
-      checkRequests.push(isRESTRequest(x.requests[idx]));
+    for (const [idx, val] of param.x.requests.entries()) {
+      const pm = {
+        x: { ...param.x.requests[idx] },
+      };
+      checkRequests.push(isRESTRequest(pm));
+      param.x.requests[idx] = pm.x;
     }
     if (!checkRequests.every((val) => val)) return false;
   }
-  if (!Array.isArray(x.folders)) {
+  if (!Array.isArray(param.x.folders)) {
     return false;
   } else {
     const checkFolders = [];
-    for (const [idx, val] of x.folders.entries()) {
-      checkFolders.push(isRESTCollection(x.folders[idx]));
+    for (const [idx, val] of param.x.folders.entries()) {
+      const pm = {
+        x: { ...param.x.folders[idx] },
+      };
+      checkFolders.push(isRESTCollection(pm));
+      param.x.folders[idx] = pm.x;
     }
     if (!checkFolders.every((val) => val)) return false;
   }
