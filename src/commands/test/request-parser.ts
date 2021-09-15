@@ -28,7 +28,7 @@ const createRequest = (
       if (!config.params) {
         config.params = {};
       }
-      config.params[x.key] = x.value;
+      if (x.key) config.params[x.key] = x.value;
     }
   }
   for (const x of req.headers) {
@@ -36,7 +36,7 @@ const createRequest = (
       if (!config.headers) {
         config.headers = {};
       }
-      config.headers[x.key] = x.value;
+      if (x.key) config.headers[x.key] = x.value;
     }
   }
   if (req.auth.authActive) {
@@ -138,11 +138,6 @@ const parseRequests = async (
   tableStream: WritableStream,
   rootPath: string = "$ROOT"
 ) => {
-  if (rootPath === "$ROOT") {
-  }
-  if (rootPath === "$ROOT" || !tableStream) {
-    
-  }
   for (const req of x.requests) {
     const parsedReq = createRequest(`${rootPath}/${x.name}`, req);
     const res = await requestRunner(parsedReq);

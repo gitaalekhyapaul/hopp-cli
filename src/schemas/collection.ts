@@ -55,12 +55,12 @@ function isRESTRequest(param: { x: any }): param is { x: HoppRESTRequest } {
     "testScript",
   ];
   for (const y of entries) {
-    if (!param.x[y] || typeof param.x[y] !== "string") return false;
+    if (typeof param.x[y] !== "string") return false;
   }
   const testParamOrHeader = (y: any) => {
-    if (!y.key || typeof y.key !== "string") return false;
-    if (!y.value || typeof y.value !== "string") return false;
-    if (!y.active || typeof y.active !== "boolean") return false;
+    if (typeof y.key !== "string") return false;
+    if (typeof y.value !== "string") return false;
+    if (typeof y.active !== "boolean") return false;
     return true;
   };
   if (!Array.isArray(param.x.params)) {
@@ -78,11 +78,7 @@ function isRESTRequest(param: { x: any }): param is { x: HoppRESTRequest } {
   if (!param.x.auth || typeof param.x.auth !== "object") {
     return false;
   } else {
-    if (
-      !param.x.auth.authActive ||
-      typeof param.x.auth.authActive !== "boolean"
-    )
-      return false;
+    if (typeof param.x.auth.authActive !== "boolean") return false;
     if (!param.x.auth.authType || typeof param.x.auth.authType !== "string") {
       return false;
     } else {
