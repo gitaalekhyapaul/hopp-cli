@@ -1,6 +1,6 @@
 import axios, { AxiosPromise, AxiosRequestConfig, Method } from "axios";
 import chalk from "chalk";
-import { createStream, WritableStream } from "table";
+import { WritableStream } from "table";
 
 import { Collection, HoppRESTRequest } from "../../schemas";
 
@@ -115,9 +115,21 @@ const requestRunner = async (x: requestStack): Promise<responseTable> => {
       if (!err.response) {
         res.statusCode = chalk.bold(chalk.redBright("ERROR : NETWORK TIMEOUT"));
       } else {
-        res.statusCode = chalk.redBright(
-          `${err.response.status} : ${err.response.statusText}`
-        );
+        res.statusCode = (() => {
+          if (err.response.status.toString().startsWith("2")) {
+            return chalk.greenBright(
+              `${err.response.status} : ${err.response.statusText}`
+            );
+          } else if (err.response.status.toString().startsWith("3")) {
+            return chalk.yellowBright(
+              `${err.response.status} : ${err.response.statusText}`
+            );
+          } else {
+            return chalk.redBright(
+              `${err.response.status} : ${err.response.statusText}`
+            );
+          }
+        })();
       }
       return res;
     } else {
