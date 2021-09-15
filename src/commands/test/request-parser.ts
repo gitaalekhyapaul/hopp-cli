@@ -1,5 +1,7 @@
 import axios, { AxiosPromise, AxiosRequestConfig, Method } from "axios";
 import chalk from "chalk";
+import { createStream, WritableStream } from "table";
+
 import { Collection, HoppRESTRequest } from "../../schemas";
 
 interface requestStack {
@@ -88,7 +90,7 @@ const requestRunner = async (x: requestStack): Promise<responseTable> => {
     const { status, statusText, config } = await x.request();
     return {
       path: x.path,
-      method: config.method ? config.method : "GET",
+      method: config.method ? (config.method.toUpperCase() as Method) : "GET",
       endpoint: config.url ? config.url : "",
       statusCode: (() => {
         if (status.toString().startsWith("2")) {
@@ -104,12 +106,14 @@ const requestRunner = async (x: requestStack): Promise<responseTable> => {
     if (axios.isAxiosError(err)) {
       let res: responseTable = {
         path: x.path,
-        method: err.config.method ? err.config.method : "GET",
+        method: err.config.method
+          ? (err.config.method.toUpperCase() as Method)
+          : "GET",
         endpoint: err.config.url ? err.config.url : "",
         statusCode: "",
       };
       if (!err.response) {
-        res.statusCode = chalk.redBright("ERROR : NETWORK TIMEOUT");
+        res.statusCode = chalk.bold(chalk.redBright("ERROR : NETWORK TIMEOUT"));
       } else {
         res.statusCode = chalk.redBright(
           `${err.response.status} : ${err.response.statusText}`
@@ -121,7 +125,9 @@ const requestRunner = async (x: requestStack): Promise<responseTable> => {
         path: x.path,
         method: "GET",
         endpoint: "",
-        statusCode: chalk.redBright("ERROR: COULD NOT PARSE RESPONSE!"),
+        statusCode: chalk.bold(
+          chalk.redBright("ERROR: COULD NOT PARSE RESPONSE!")
+        ),
       };
     }
   }
@@ -129,21 +135,21 @@ const requestRunner = async (x: requestStack): Promise<responseTable> => {
 
 const parseRequests = async (
   x: Collection<HoppRESTRequest>,
+  tableStream: WritableStream,
   rootPath: string = "$ROOT"
 ) => {
   if (rootPath === "$ROOT") {
-    console.clear();
-    console.log(
-      chalk.yellowBright("Collection JSON parsed! Executing requests...")
-    );
+  }
+  if (rootPath === "$ROOT" || !tableStream) {
+    
   }
   for (const req of x.requests) {
     const parsedReq = createRequest(`${rootPath}/${x.name}`, req);
     const res = await requestRunner(parsedReq);
-    console.dir(res);
+    tableStream.write([res.path, res.method, res.endpoint, res.statusCode]);
   }
   for (const folder of x.folders) {
-    await parseRequests(folder, `${rootPath}/${x.name}`);
+    await parseRequests(folder, tableStream, `${rootPath}/${x.name}`);
   }
 };
 

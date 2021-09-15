@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import { join, extname } from "path";
 import inquirer from "inquirer";
 import chalk from "chalk";
+import { createStream } from "table";
 import fuzzyPath from "inquirer-fuzzy-path";
 inquirer.registerPrompt("fuzzypath", fuzzyPath);
 
@@ -29,8 +30,27 @@ const run = async (context: context) => {
   }
   if (valid.every((val) => val)) {
     context.collections = collectionArray;
+    console.clear();
+    console.log(
+      chalk.yellowBright("Collection JSON parsed! Executing requests...")
+    );
+    const tableStream = createStream({
+      columnDefault: {
+        width: 30,
+        alignment: "center",
+        verticalAlignment: "middle",
+        wrapWord: true,
+      },
+      columnCount: 4,
+    });
+    tableStream.write([
+      chalk.bold(chalk.cyanBright("PATH")),
+      chalk.bold(chalk.cyanBright("METHOD")),
+      chalk.bold(chalk.cyanBright("ENDPOINT")),
+      chalk.bold(chalk.cyanBright("STATUS CODE")),
+    ]);
     for (const x of collectionArray) {
-      await requestParser(x);
+      await requestParser(x, tableStream);
     }
   } else {
     throw errors.HOPP003;
