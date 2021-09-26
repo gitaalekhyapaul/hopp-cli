@@ -47,7 +47,7 @@ program
 export const run = async (args: string[]) => {
   try {
     await program.parseAsync(args);
-  } catch (err) {
+  } catch (err: any) {
     errorHandler(err);
   }
   const options = program.opts();

@@ -21,6 +21,11 @@ export function makeCollection<T extends HoppRESTRequest>(
   };
 }
 
+/**
+ * Translating the older version of collections to the newer version
+ * @param x The collection JSON object to be parsed
+ * @returns The parsed collection object
+ */
 export function translateToNewRESTCollection(
   x: any
 ): Collection<HoppRESTRequest> {
@@ -42,6 +47,11 @@ export function translateToNewRESTCollection(
   return obj;
 }
 
+/**
+ * Typeguard to check valid Hoppscotch Collection JSON
+ * @param x The object to be checked
+ * @returns Boolean value corresponding to the validity check
+ */
 function isRESTRequest(param: { x: any }): param is { x: HoppRESTRequest } {
   if (!param.x || typeof param.x !== "object") return false;
   if (!param.x.v) {
@@ -134,6 +144,11 @@ function isRESTRequest(param: { x: any }): param is { x: HoppRESTRequest } {
   return true;
 }
 
+/**
+ * Typeguard to check valid Hoppscotch REST Collection
+ * @param x The object to be checked
+ * @returns Boolean value corresponding to the validity check
+ */
 export function isRESTCollection(param: {
   x: any;
 }): param is { x: Collection<HoppRESTRequest> } {

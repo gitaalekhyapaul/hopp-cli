@@ -1,3 +1,5 @@
+// * A simple implementation to listen to a local TCP socket for debugging logs
+
 if (!(process.argv.length >= 3)) {
   console.error("Usage: 'node debugger.js <PORT>'");
   process.exit(1);

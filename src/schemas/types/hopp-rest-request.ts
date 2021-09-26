@@ -99,10 +99,20 @@ export interface HoppRESTRequest {
   body: HoppRESTReqBody;
 }
 
+/**
+ * Typeguard to check valid Hoppscotch REST Request
+ * @param x The object to be checked
+ * @returns Boolean value corresponding to the validity check
+ */
 export function isHoppRESTRequest(x: any): x is HoppRESTRequest {
   return x && typeof x === "object" && "v" in x;
 }
 
+/**
+ * Parsing old version of request body to the newer version
+ * @param x The object to be parsed
+ * @returns The parsed request body
+ */
 function parseRequestBody(x: any): HoppRESTReqBody {
   if (x.contentType === "application/json") {
     return {
@@ -113,10 +123,15 @@ function parseRequestBody(x: any): HoppRESTReqBody {
 
   return {
     contentType: "application/json",
-    body: "",
+    body: "{}",
   };
 }
 
+/**
+ * Translating the older version of collection requests to the newer version
+ * @param x The request object to be parsed
+ * @returns The parsed request object
+ */
 export function translateToNewRequest(x: any): HoppRESTRequest {
   if (isHoppRESTRequest(x)) {
     return x;
@@ -172,6 +187,11 @@ export function translateToNewRequest(x: any): HoppRESTRequest {
   }
 }
 
+/**
+ * Parsing old version of request auth to the newer version
+ * @param x The object to be parsed
+ * @returns The parsed request auth
+ */
 function parseOldAuth(x: any): HoppRESTAuth {
   if (!x.auth || x.auth === "None")
     return {

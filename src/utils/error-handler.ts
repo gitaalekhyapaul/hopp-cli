@@ -6,6 +6,10 @@ export interface CLIError extends Error {
   code?: string;
 }
 
+/**
+ * The all-catch generic error handler, it catches all errors, custom and generic, generated during the CLI execution
+ * @param err The error object, it can be a custom error or an error thrown by `Commander.js`
+ */
 const errorHandler = (err: CLIError | CommanderError) => {
   if (err instanceof CommanderError) {
     if (err.exitCode === 0) {

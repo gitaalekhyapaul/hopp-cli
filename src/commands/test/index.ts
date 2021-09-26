@@ -11,6 +11,10 @@ import { errors } from "../../utils";
 import { isRESTCollection } from "../../schemas/collection";
 import requestParser from "./request-parser";
 
+/**
+ * Command handler for the `hopp-cli test` or `hopp-cli -c <config>` commands
+ * @param context The initial CLI context object
+ */
 const run = async (context: context) => {
   if (context.interactive) {
     await parseOptions(context);
@@ -57,6 +61,11 @@ const run = async (context: context) => {
   }
 };
 
+/**
+ * Check if the file exists and check the file extension
+ * @param url The input file path to check
+ * @returns The absolute file URL, if the file exists
+ */
 const checkFileURL = async (url: string) => {
   try {
     const fileUrl = join(process.cwd(), url);
@@ -77,6 +86,12 @@ const checkFileURL = async (url: string) => {
     throw err;
   }
 };
+
+/**
+ * Parse options to collect JSON file path, through interactive CLI
+ * @param context The initial CLI context object
+ * @returns The parsed absolute file path string
+ */
 const parseOptions = async (context: context): Promise<any> => {
   try {
     const { fileUrl }: { fileUrl: string } = await inquirer.prompt([

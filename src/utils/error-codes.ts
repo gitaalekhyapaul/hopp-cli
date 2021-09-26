@@ -1,3 +1,6 @@
+/**
+ * * Error codes for throwing known errors
+ */
 const errors = {
   HOPP000: {
     code: "HOPP000",
