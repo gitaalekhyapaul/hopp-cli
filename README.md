@@ -9,7 +9,7 @@
 ## **Preview of the CLI:**
 
 <div align="center">
-    <video width="700" alt="Demo Video" src="./assets/demo.mov" autoplay loop/>
+    <img width="700" alt="Demo Video" src="./assets/demo.gif" autoplay loop/>
 </div>
 
 ## **Commands Available:**
