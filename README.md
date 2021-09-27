@@ -1,4 +1,8 @@
 <div align="center">
+    <h1><strong>This was a part of my proposal for GitHub Externship 1.0</strong></h1>
+</div>
+
+<div align="center">
     <h1><strong>Hoppscotch CLI</strong></h1>
 </div>
 
